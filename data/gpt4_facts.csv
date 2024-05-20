@@ -1,0 +1,201 @@
+statement,label
+"Water boils at 100 degrees Celsius at sea level.",1
+"The Moon orbits the Earth.",1
+"The Amazon Rainforest is located primarily in Brazil.",1
+"Humans have 23 pairs of chromosomes.",1
+"The Pacific Ocean is the largest ocean on Earth.",1
+"Bees are important for pollination.",1
+"The Great Wall of China was primarily built to protect against invasions.",1
+"Photosynthesis is the process plants use to convert sunlight into energy.",1
+"Venus is the hottest planet in our solar system.",1
+"Diamonds are formed under high pressure and temperature conditions.",1
+"Mercury is the largest planet in the solar system.",0
+"Camels store water in their humps.",0
+"Humans can breathe pure nitrogen without any harm.",0
+"The Sahara Desert is in South America.",0
+"The heart is located in the right side of the human chest.",0
+"Bats are blind.",0
+"Gold is the hardest natural substance on Earth.",0
+"Polar bears live in Antarctica.",0
+"The Nile River flows from south to north.",0
+"Chocolate is made from the seeds of the berry fruit.",0
+"The heart pumps blood throughout the body.",1
+"Winters are generally colder than summers in the northern hemisphere.",1
+"Gold is a good conductor of electricity.",1
+"Trees produce oxygen.",1
+"Mount Everest is the highest mountain in the world.",1
+"Rabbits are herbivores.",1
+"The skin is the largest organ of the human body.",1
+"Penguins are birds that cannot fly.",1
+"Bananas are rich in potassium.",1
+"An octopus has three hearts.",1
+"Cats are herbivores.",0
+"The sun revolves around the Earth.",0
+"Humans have five lungs.",0
+"Iron is the most transparent metal.",0
+"All birds can fly.",0
+"Deserts are always hot.",0
+"The moon emits its own light.",0
+"Sharks can live in freshwater environments.",0
+"Plants absorb oxygen during the day.",0
+"The common cold is caused by cold weather itself.",0
+"Antibiotics are used to treat bacterial infections.",1
+"Gravity keeps us grounded on Earth.",1
+"The Internet is a global network of computers.",1
+"Carrots are rich in vitamin A.",1
+"An adult human body has 206 bones.",1
+"Sound travels faster through water than through air.",1
+"Mars is known as the Red Planet.",1
+"Jupiter is the largest planet in the solar system.",1
+"Ice floats on water because it is less dense than liquid water.",1
+"The human brain controls most of the body's functions.",1
+"Fish are mammals.",0
+"Pluto is considered one of the primary planets in our solar system.",0
+"Chocolate is a low-energy food.",0
+"Whales are a type of fish.",0
+"The sky appears red because it reflects the color of the ocean.",0
+"Coffee beans are actually beans.",0
+"A kilometer is longer than a mile.",0
+"The Great Pyramid of Giza was built by the Romans.",0
+"All spiders have ten legs.",0
+"Lions are known for their climbing abilities.",0
+"The Statue of Liberty was a gift from France to the United States.",1
+"Vitamin C helps prevent scurvy.",1
+"Water is a compound made up of hydrogen and oxygen.",1
+"The human digestive system begins in the mouth.",1
+"Earth is the third planet from the Sun.",1
+"A square has four equal sides.",1
+"The Sahara is the largest hot desert in the world.",1
+"Koalas are native to Australia.",1
+"The Titanic sank after hitting an iceberg.",1
+"Electricity can be generated from wind.",1
+"Venus is the closest planet to the Sun.",0
+"Elephants are carnivorous animals.",0
+"The capital of Australia is Sydney.",0
+"Humans can regenerate lost limbs naturally.",0
+"The currency of the United States is the euro.",0
+"Water freezes at 10 degrees Celsius.",0
+"All mammals are capable of flying.",0
+"Photosynthesis occurs at night.",0
+"Mercury is the hottest because it's the largest planet in the solar system.",0
+"The primary language of Brazil is Spanish.",0
+"The Eiffel Tower is located in Paris, France.",1
+"Lightning is a sudden electrostatic discharge during a thunderstorm.",1
+"Oxygen is essential for human respiration.",1
+"Pandas primarily eat bamboo.",1
+"The human body has five senses.",1
+"A rectangle has four sides.",1
+"Computers use binary code to process data.",1
+"DNA carries genetic information.",1
+"Wool is obtained from sheep.",1
+"The Pyramids of Giza are located in Egypt.",1
+"The Pacific Ocean is smaller than the Atlantic Ocean.",0
+"Cheetahs are the largest cats in the wild.",0
+"Planets emit their own light like stars.",0
+"The primary component of natural gas is oxygen.",0
+"Dolphins are fish.",0
+"Bread is a primary source of vitamin C.",0
+"Mercury has the most moons of any planet in the solar system.",0
+"Roses are famous for their distinctive blue color.",0
+"The Amazon is the longest river in the world.",0
+"Bats use their eyes as their primary navigational method.",0
+"The Leaning Tower of Pisa is in Italy.",1
+"Helium is lighter than air.",1
+"The skin of a golden poison dart frog can be lethal to predators.",1
+"The violin typically has four strings.",1
+"Albert Einstein developed the theory of general relativity.",1
+"Anemometers are used to measure wind speed.",1
+"Ostriches are the largest birds in the world.",1
+"Squids have a beak-like structure.",1
+"The periodic table organizes elements by increasing atomic number.",1
+"Electric eels can produce electrical discharges to defend themselves or stun prey.",1
+"The sun is a planet.",0
+"Frogs can live in saltwater environments.",0
+"Iron is the lightest metal.",0
+"The human brain is completely smooth.",0
+"Mount Fuji is in Australia.",0
+"Spiders have six legs.",0
+"Diamonds are the most flexible natural material.",0
+"The currency of the United States is the British pound.",0
+"The Great Wall of China is visible from the moon with the naked eye.",0
+"All plants produce flowers.",0
+"The Basenji is a breed of dog that does not bark.",1
+"Kangaroos are native to Australia.",1
+"Banana plants are classified as herbs.",1
+"The Atlantic Ocean is the second largest ocean in the world.",1
+"Honey never spoils under natural conditions.",1
+"Polar bears primarily eat seals.",1
+"The Mediterranean Sea is connected to the Atlantic Ocean by the Strait of Gibraltar.",1
+"Zebras have unique stripe patterns similar to human fingerprints.",1
+"The primary source of the Nile River is generally considered to be Lake Victoria.",1
+"Yosemite National Park is located in California, USA.",1
+"Copper is the most conductive metal.",0
+"Penguins are native to the North Pole.",0
+"The human skeleton is made entirely of one substance.",0
+"The lightest element on the periodic table is carbon.",0
+"All mammals lay eggs.",0
+"Venus rotates in the same direction as most planets in the solar system.",0
+"The Great Pyramid of Giza was built by Alexander the Great.",0
+"A pound is heavier than a kilogram.",0
+"Clouds are made of cotton.",0
+"The capital of Canada is Toronto.",0
+"A group of crows is known as a murder.",1
+"Mars is often referred to as the 'Red Planet' due to its reddish appearance.",1
+"The Andes Mountains are located in South America.",1
+"Saturn is known for its ring system.",1
+"A hectare is approximately 2.47 acres.",1
+"The formula for water is H2O.",1
+"Penicillin was discovered by Alexander Fleming.",1
+"The sum of the angles in a triangle is 180 degrees.",1
+"The Taj Mahal is located in India.",1
+"The hummingbird can fly backwards.",1
+"Whales are the largest species of fish.",0
+"Chocolate is a low-calorie food.",0
+"The Amazon River flows entirely through the United States.",0
+"The capital of France is Berlin.",0
+"Photosynthesis takes place in animals.",0
+"The Earth is flat.",0
+"The human body has four kidneys.",0
+"Rabbits are a type of bird.",0
+"Lead is the lightest metal.",0
+"Ice sinks in water.",0
+"The piano typically has 88 keys.",1
+"Nitrogen makes up the majority of the Earth's atmosphere.",1
+"The Pythagorean theorem is used to determine the length of sides in a right triangle.",1
+"Australia is the only continent covered by a single country.",1
+"The human body typically maintains a temperature of around 37 degrees Celsius.",1
+"The Great Sphinx of Giza has the body of a lion and the head of a human.",1
+"The Dead Sea is one of the saltiest bodies of water in the world.",1
+"Oranges are a good source of Vitamin C.",1
+"The term 'renaissance' is used to describe a period of renewed interest in arts and science that took place in Europe between the 14th and 17th centuries.",1
+"The Mona Lisa was painted by Leonardo da Vinci.",1
+"Mercury is the largest planet in our solar system.",0
+"Cheetahs are the largest species of big cat.",0
+"Cats are primarily aquatic creatures.",0
+"Humans have two hearts.",0
+"The primary language spoken in Brazil is Spanish.",0
+"Jupiter is closer to the sun than Earth is.",0
+"Polar bears are native to Antarctica.",0
+"Coffee is made from leaves.",0
+"The Eiffel Tower is in London.",0
+"The Sahara Desert is the largest rainforest in the world.",0
+"The longest river in the world is the Nile.",1
+"The atomic number of hydrogen is 1.",1
+"A rhombus is a type of parallelogram.",1
+"The capital of Italy is Rome.",1
+"Fungi are incapable of photosynthesis.",1
+"The currency of the United Kingdom is the pound sterling.",1
+"The human eye has a part called the iris.",1
+"Wolves typically live and hunt in packs.",1
+"Giraffes have the same number of neck vertebrae as humans.",1
+"An adult human has 32 teeth.",1
+"Venus is the furthest planet from the Sun.",0
+"All insects have four legs.",0
+"The capital of Egypt is Lagos.",0
+"Water boils at 90 degrees Celsius at sea level.",0
+"The main ingredient in glass production is plastic.",0
+"The common cold is caused by hyperthermia.",0
+"Sharks can blink both eyes simultaneously.",0
+"Rice is the primary ingredient in traditional Italian pasta.",0
+"Elephants are commonly found in the wild in Europe.",0
+"Humans can naturally breathe underwater.",0
