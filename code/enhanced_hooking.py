@@ -15,12 +15,16 @@ def attach_activation_hooks(model, layers_positions, activation_storage, get_at=
 ###                activation_storage[layer_idx].extend(output[i, pos_list, :].detach().cpu())
             for batch_idx in range(len(positions)):
                 for pos_idx, seq_pos in enumerate(positions[batch_idx]):
+                    ###print(f"Layer={layer_idx}, seq_pos={seq_pos}")
                     activation_storage[layer_idx][pos_idx].append(output[batch_idx, seq_pos, :].detach().cpu())
         def pre_hook(module, input):
-            for i, pos_list in enumerate(positions):
-                selected_activations = input[0][i, pos_list, :]
+###            for i, pos_list in enumerate(positions):
+###                selected_activations = input[0][i, pos_list, :]
                 #print(f"Type of selected_activations: {type(selected_activations)}, size: {selected_activations.size()}")
-                activation_storage[layer_idx].extend(selected_activations.detach().cpu())
+###                activation_storage[layer_idx].extend(selected_activations.detach().cpu())
+            for batch_idx in range(len(positions)):
+                for pos_idx, seq_pos in enumerate(positions[batch_idx]):
+                    activation_storage[layer_idx][pos_idx].append(input[0][batch_idx, seq_pos, :].detach().cpu())
         return hook if get_at == 'end' else pre_hook
 
     # Clear previous storage
@@ -62,11 +66,10 @@ def get_activations(model, tokens, layers_positions, get_at='end'):
             for layer, pos_dict in activation_storage.items()}   
 
 
-def create_add_activations_hook(layers_activations, add_at='end'):
+def create_add_activations_hook(layers_activations):
     """
     Create a hook to add activation vectors at specified positions within specified layers.
     layers_activations: A dictionary where keys are layer indices and values are tuples of (positions, activation_vectors).
-    add_at: 'start' to add at the beginning of a block, 'end' to add at the end of a block.
     """
     def hook(module, inputs, outputs):
         layer_idx = getattr(module, 'layer_idx', None)
@@ -91,11 +94,10 @@ def create_add_activations_hook(layers_activations, add_at='end'):
     return hook
 
 
-def create_add_activations_pre_hook(layers_activations, add_at='end'):
+def create_add_activations_pre_hook(layers_activations):
     """
     Create a hook to add activation vectors at specified positions within specified layers.
     layers_activations: A dictionary where keys are layer indices and values are tuples of (positions, activation_vectors).
-    add_at: 'start' to add at the beginning of a block, 'end' to add at the end of a block.
     """
     def hook(module, inputs):
         if inputs[0].shape[1] == 1: return inputs #hack to turn this off during generation (same as returning None)
@@ -107,6 +109,8 @@ def create_add_activations_pre_hook(layers_activations, add_at='end'):
                 if position < inputs[0].shape[1]:
                     print(f"Adding activations at layer {layer_idx} at position {position}")
                     print(f"inputs[0].size={inputs[0].size()}, activation_vector.size={activation_vector.size()}")
+                    print(f"inputs[0] norm: {torch.norm(inputs[0][:, position, :]):.4f}")
+                    print(f"Add vector norm: {torch.norm(activation_vector):.4f}")
                     inputs = list(inputs)  # Convert tuple to list for mutability
                     inputs[0][:, position, :] += activation_vector
                     inputs = tuple(inputs)  # Convert back to tuple to maintain integrity
@@ -114,6 +118,21 @@ def create_add_activations_pre_hook(layers_activations, add_at='end'):
                     print(f"Position {position} is out of bounds for the current sequence ({inputs[0].shape[1]}).")
         
         return inputs
+    return hook
+
+    
+def create_continuous_zeroout_activations_hook(continuouspos_layer_activations):
+    def hook(module, inputs, outputs):
+        current_layer_idx = getattr(module, 'layer_idx', None)
+        if current_layer_idx in continuouspos_layer_activations:
+            direction_vector = continuouspos_layer_activations[current_layer_idx]
+            main_tensor = outputs[0] if isinstance(outputs, tuple) else outputs
+            norm_squared = torch.norm(direction_vector)**2 
+            direction_vector = direction_vector.to(main_tensor.dtype).view(-1, 1) # Shape [d_embed, 1] 
+            projection = (main_tensor @ direction_vector) / norm_squared 
+            direction_vector = direction_vector.view(1, 1, -1) # Reshape for broadcasting; add dummy dimensions for batch and seq while keeping the last the same 
+            main_tensor -= (projection * direction_vector)
+        return (main_tensor,) + outputs[1:] if isinstance(outputs, tuple) else main_tensor
     return hook
 
 
@@ -180,6 +199,27 @@ def add_activations_and_generate(model, tokens, specificpos_layer_activations, c
             block._forward_hooks.clear()
         else:
             block._forward_pre_hooks.clear()
+
+    return generated_ids
+
+
+def zeroout_projections_and_generate(model, tokens, continuouspos_layer_activations, sampling_kwargs):
+    transformer_blocks = get_blocks(model)
+    
+    # Attach hooks for multiple continuous activations across different layers
+    for idx, block in enumerate(transformer_blocks):
+        setattr(block, 'layer_idx', idx)
+        if idx in continuouspos_layer_activations:
+            continuous_hook = create_continuous_zeroout_activations_hook(continuouspos_layer_activations)
+            block.register_forward_hook(continuous_hook)
+
+    # Generate tokens
+    tokens = {k: v.to(next(model.parameters()).device) for k, v in tokens.items()}
+    generated_ids = model.generate(**tokens, **sampling_kwargs)
+
+    # Cleanup hooks
+    for block in transformer_blocks:
+        block._forward_hooks.clear()
 
     return generated_ids
 
