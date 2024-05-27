@@ -257,3 +257,11 @@ What about during generation for prompts where there are no honest or dishonest 
 Interestingly, at layer 17 and a couple near it there’s a sustained projection differential in favor of facts. Perhaps this is why amplifying the vector caused the model do identify more claims as true in this dataset.
 
 TBC
+
+Update: Logit lens adds some clarity
+
+![logit_lens_plusvec.png](figs/logit_lens_plusvec.png)
+
+![logit_lens_minusvec.png](figs/logit_lens_minusvec.png)
+
+Perhaps the vector is less about honesty than about certainty.
