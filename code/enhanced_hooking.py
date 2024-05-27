@@ -11,17 +11,12 @@ def attach_activation_hooks(model, layers_positions, activation_storage, get_at=
         def hook(module, input, output):
             # output shape is (batch_size, sequence_length, hidden_size)
             if isinstance(output, tuple): output = output[0]
-###            for i, pos_list in enumerate(positions):
-###                activation_storage[layer_idx].extend(output[i, pos_list, :].detach().cpu())
             for batch_idx in range(len(positions)):
                 for pos_idx, seq_pos in enumerate(positions[batch_idx]):
                     ###print(f"Layer={layer_idx}, seq_pos={seq_pos}")
                     activation_storage[layer_idx][pos_idx].append(output[batch_idx, seq_pos, :].detach().cpu())
         def pre_hook(module, input):
-###            for i, pos_list in enumerate(positions):
-###                selected_activations = input[0][i, pos_list, :]
                 #print(f"Type of selected_activations: {type(selected_activations)}, size: {selected_activations.size()}")
-###                activation_storage[layer_idx].extend(selected_activations.detach().cpu())
             for batch_idx in range(len(positions)):
                 for pos_idx, seq_pos in enumerate(positions[batch_idx]):
                     activation_storage[layer_idx][pos_idx].append(input[0][batch_idx, seq_pos, :].detach().cpu())
@@ -120,21 +115,6 @@ def create_add_activations_pre_hook(layers_activations):
         return inputs
     return hook
 
-    
-def create_continuous_zeroout_activations_hook(continuouspos_layer_activations):
-    def hook(module, inputs, outputs):
-        current_layer_idx = getattr(module, 'layer_idx', None)
-        if current_layer_idx in continuouspos_layer_activations:
-            direction_vector = continuouspos_layer_activations[current_layer_idx]
-            main_tensor = outputs[0] if isinstance(outputs, tuple) else outputs
-            norm_squared = torch.norm(direction_vector)**2 
-            direction_vector = direction_vector.to(main_tensor.dtype).view(-1, 1) # Shape [d_embed, 1] 
-            projection = (main_tensor @ direction_vector) / norm_squared 
-            direction_vector = direction_vector.view(1, 1, -1) # Reshape for broadcasting; add dummy dimensions for batch and seq while keeping the last the same 
-            main_tensor -= (projection * direction_vector)
-        return (main_tensor,) + outputs[1:] if isinstance(outputs, tuple) else main_tensor
-    return hook
-
 
 def create_continuous_activation_hook(continuouspos_layer_activations):
     def hook(module, inputs, outputs):
@@ -162,6 +142,25 @@ def create_continuous_activation_pre_hook(continuous_layers_activations):
             inputs = tuple(inputs)  # Convert back to tuple to maintain integrity
         return inputs
     return pre_hook
+
+    
+def create_continuous_zeroout_activations_hook(continuouspos_layer_activations):
+    """
+    Create a hook that subtracts out from a residual stream vector its projection onto the direction vector.
+    Applies to each new token generated.
+    """
+    def hook(module, inputs, outputs):
+        current_layer_idx = getattr(module, 'layer_idx', None)
+        if current_layer_idx in continuouspos_layer_activations:
+            direction_vector = continuouspos_layer_activations[current_layer_idx]
+            main_tensor = outputs[0] if isinstance(outputs, tuple) else outputs
+            
+            direction_vector = direction_vector.to(main_tensor.dtype).view(-1, 1)  # Shape [d_embed, 1]
+            projection = (main_tensor @ direction_vector) / torch.norm(direction_vector)**2
+            direction_vector = direction_vector.view(1, 1, -1)  # Reshape for broadcasting; add dummy dimensions for batch and seq while keeping the last the same
+            main_tensor -= (projection * direction_vector)
+        return (main_tensor,) + outputs[1:] if isinstance(outputs, tuple) else main_tensor
+    return hook
 
 
 def add_activations_and_generate(model, tokens, specificpos_layer_activations, continuouspos_layer_activations, sampling_kwargs, add_at='end'):
@@ -222,6 +221,66 @@ def zeroout_projections_and_generate(model, tokens, continuouspos_layer_activati
         block._forward_hooks.clear()
 
     return generated_ids
+
+
+def attach_generation_activation_hooks(model, layers_positions, activation_storage, get_at='end'):
+    """
+    Attach hooks to specified layers to capture activations at specified positions, then at final during generation.
+    """
+    def capture_activations_hook(layer_idx, positions, get_at='end'):
+        def hook(module, input, output):
+            # output shape is (batch_size, sequence_length, hidden_size)
+            if isinstance(output, tuple): output = output[0]
+            for batch_idx in range(len(positions)):
+                for pos_idx, seq_pos in enumerate(positions[batch_idx]):
+                    ###print(f"Layer={layer_idx}, seq_pos={seq_pos}, output.shape[1]={output.shape[1]}")
+                    if seq_pos > output.shape[1]: #happens during generation
+                        ###print(f"max(activation_storage[layer_idx].keys())={max(activation_storage[layer_idx].keys())}")
+                        if batch_idx == 0: # only have to adjust once per batch
+                            maxpos = max(activation_storage[layer_idx].keys())+1
+                        activation_storage[layer_idx][maxpos].append(output[batch_idx, output.shape[1]-1, :].detach().cpu())
+                        break #only add one per generated token
+                    activation_storage[layer_idx][pos_idx].append(output[batch_idx, seq_pos, :].detach().cpu())
+        return hook
+        
+    activation_storage.clear()
+
+    transformer_blocks = get_blocks(model)
+    for idx, block in enumerate(transformer_blocks):
+        if idx in layers_positions:
+            hook = capture_activations_hook(idx, layers_positions[idx], get_at)
+            if get_at=='end': block.register_forward_hook(hook)
+            else: block.register_forward_pre_hook(hook)
+
+
+def get_activations_and_generate(model, tokens, layers_positions, sampling_kwargs, get_at='end'):
+    """
+    Get activations during generation
+    """
+    # Prepare storage for activations
+    activation_storage = defaultdict(lambda: defaultdict(list))###defaultdict(list)
+
+    # Attach hooks to the model
+    attach_generation_activation_hooks(model, layers_positions, activation_storage)
+
+    # Ensure the model is in eval mode
+    model.eval()
+
+    # Run the model with the tokens
+    sampling_kwargs['use_cache'] = True #there's no point not using cache since it won't change, and it would just complicate the return struct logic
+    with torch.no_grad():
+        tokens = {k: v.to(next(model.parameters()).device) for k, v in tokens.items()}
+        _ = model.generate(**tokens, **sampling_kwargs)
+
+    # Remove hooks after use (to avoid memory leak)
+    for block in get_blocks(model):
+        if get_at == 'end': block._forward_hooks.clear()
+        else: block._forward_pre_hooks.clear()
+
+###    return dict(activation_storage)
+    return {layer: {pos: torch.stack(tensors) for pos, tensors in pos_dict.items()} 
+            for layer, pos_dict in activation_storage.items()}   
+ 
 
 
 def get_blocks(model: nn.Module) -> nn.ModuleList:
