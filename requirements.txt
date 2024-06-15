@@ -11,7 +11,7 @@ exceptiongroup==1.2.1
 executing==2.0.1
 filelock==3.14.0
 fonttools==4.51.0
-fsspec==2024.5.0
+fsspec==2024.3.1
 huggingface-hub==0.23.0
 idna==3.7
 ipykernel==6.29.4
@@ -65,3 +65,4 @@ typing_extensions==4.11.0
 tzdata==2024.1
 urllib3==2.2.1
 wcwidth==0.2.13
+git+https://github.com/github.com/cma1114/enhanced_hooking.git

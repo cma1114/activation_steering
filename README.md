@@ -254,7 +254,7 @@ What about during generation for prompts where there are no honest or dishonest 
 
 ![generation_heatmap_gpt4facts.png](figs/generation_heatmap_gpt4facts.png)
 
-Interestingly, at layer 17 and a couple near it there’s a sustained projection differential in favor of facts. Perhaps this is why amplifying the vector caused the model do identify more claims as true in this dataset.
+Interestingly, at layer 17 and a couple near it there’s a sustained projection differential in favor of facts. Perhaps this is why amplifying the vector caused the model to identify more claims as true in this dataset.
 
 TBC
 
